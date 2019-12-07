@@ -6,7 +6,7 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 2
+  initial_node_count       = 1
 
   master_auth {
     username = ""
@@ -18,7 +18,6 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-/*
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "my-node-pool"
   location = "us-west1"
@@ -38,5 +37,13 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
       "https://www.googleapis.com/auth/monitoring",
     ]
   }
+  provisioner "local-exec" {
+    command = "gcloud container clusters get-credentials --region ${google_container_cluster.primary.location} ${google_container_cluster.primary.name}"
+  }
+
+  provisioner "local-exec" {
+    when = "destroy"
+    command = "kubectl config delete-context gke_${var.project_id}_${google_container_cluster.primary.location}_${google_container_cluster.primary.name}"
+    on_failure = "continue"
+  }
 }
-*/
