@@ -20,8 +20,8 @@ echo "Private IP Check..."
 ip -4 -br address show  ens4  | grep "10.138.0.10/32" 
 if [ "$?" -eq 0 ];then
   cd /home/ubuntu
-  #kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
-  kubeadm init --pod-network-cidr=192.168.0.0/16 | tee kubeadm-init.out
+  kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
+  #kubeadm init --pod-network-cidr=192.168.0.0/16 | tee kubeadm-init.out
   mkdir -p .kube
   cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
   chown ubuntu:ubuntu /home/ubuntu/.kube/config
