@@ -1,6 +1,6 @@
 
 resource "google_compute_instance" "vm_instance" {
-  count = 1
+  count = 3
   name         = format("linux-foundation-%s", count.index + 1)
   machine_type = "n1-standard-2"
   zone    = "us-west1-b"
