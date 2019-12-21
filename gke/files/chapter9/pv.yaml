@@ -1,0 +1,13 @@
+kind: PersistentVolume 
+apiVersion: v1 
+metadata: 
+    name: one-gi
+    labels: 
+        type: local 
+spec: 
+    capacity: 
+        storage: 1Gi 
+    accessModes: 
+        - ReadWriteOnce 
+    hostPath: 
+        path: "/var/data01"

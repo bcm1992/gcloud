@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shell-demo 
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    envFrom:
+    - configMapRef:
+        name: colors
+    volumeMounts:
+    - name: car-vol
+      mountPath: /etc/carskubectl delete pods shell-demo
+  volumes:
+  - name: car-vol 
+    configMap:
+      name: fast-car
+#    env:
+#    - name: ilike
+#      valueFrom:
+#        configMapKeyRef:
+#          name: colors
+#          key: favorite

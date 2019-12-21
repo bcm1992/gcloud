@@ -1,6 +1,6 @@
 
 resource "google_compute_instance" "vm_instance" {
-  count = 3
+  count = 1
   name         = format("linux-foundation-%s", count.index + 1)
   machine_type = "n1-standard-2"
   zone    = "us-west1-b"
@@ -35,8 +35,8 @@ resource "google_compute_instance" "vm_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.gce_ssh_private_key_file)}"
-      host        = "${self.network_interface[0].access_config[0].nat_ip}"
+      private_key = file(var.gce_ssh_private_key_file)
+      host        = self.network_interface[0].access_config[0].nat_ip
     }
   }
 
@@ -46,8 +46,8 @@ resource "google_compute_instance" "vm_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.gce_ssh_private_key_file)}"
-      host        = "${self.network_interface[0].access_config[0].nat_ip}"
+      private_key = file(var.gce_ssh_private_key_file)
+      host        = self.network_interface[0].access_config[0].nat_ip
     }
   }
 
@@ -61,8 +61,8 @@ resource "google_compute_instance" "vm_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.gce_ssh_private_key_file)}"
-      host        = "${self.network_interface[0].access_config[0].nat_ip}"
+      private_key = file(var.gce_ssh_private_key_file)
+      host        = self.network_interface[0].access_config[0].nat_ip
     }
   }
 
@@ -75,8 +75,8 @@ resource "google_compute_instance" "vm_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.gce_ssh_private_key_file)}"
-      host        = "${self.network_interface[0].access_config[0].nat_ip}"
+      private_key = file(var.gce_ssh_private_key_file)
+      host        = self.network_interface[0].access_config[0].nat_ip
     }
   }
 

@@ -31,4 +31,12 @@ if [ "$?" -eq 0 ];then
   kubectl apply -f /home/ubuntu/calico.yaml 
   #kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/calico.yaml
   kubectl taint nodes --all node-role.kubernetes.io/master-
+  echo "alias k=kubectl" >> $HOME/.bash_profile
+  # NFS
+  apt-get install -y nfs-kernel-server
+  mkdir /opt/sfw
+  chmod 1777 /opt/sfw/
+  echo software > /opt/sfw/hello.txt
+  echo '/opt/sfw/ *(rw,sync,no_root_squash,subtree_check)' >> /etc/exports
+  exportfs -ra
 fi

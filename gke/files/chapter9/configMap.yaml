@@ -1,0 +1,10 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata: 
+    name: foobar 
+data: 
+    config.js: | 
+      { "key1" : "value1", 
+        "key2" : "value2",
+        "key3" : "value3"
+      }
