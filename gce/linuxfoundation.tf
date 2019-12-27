@@ -52,7 +52,7 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   provisioner "local-exec" {
-    command = "tar zcf ./files/yaml_files.tar.gz ./files/*.yaml"
+    command = "tar zcf ./files/yaml_files.tar.gz ./files/ckad ./files/cka"
   }
 
   provisioner "file" {

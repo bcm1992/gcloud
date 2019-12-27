@@ -5,11 +5,10 @@ tar -xvf LFS258_V2019-08-12_SOLUTIONS.tar.bz2
 apt-get install -y docker.io
 
 echo deb http://apt.kubernetes.io/ kubernetes-xenial main >> /etc/apt/sources.list.d/kubernetes.list
-
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
 #apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
-apt-get install -y kubeadm=1.16.1-00 kubelet=1.16.1-00 kubectl=1.16.1-00
+apt-get install -y --allow-downgrades kubeadm=1.16.1-00 kubelet=1.16.1-00 kubectl=1.16.1-00
 
 sudo sh -c "echo 10.138.0.10 k8smaster >> /etc/hosts"
 
