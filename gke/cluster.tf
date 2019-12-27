@@ -42,8 +42,8 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   }
 
   provisioner "local-exec" {
-    when       = "destroy"
-    command    = "kubectl config delete-context gke_${var.project_id}_${google_container_cluster.primary.location}_${google_container_cluster.primary.name}"
-    on_failure = "continue"
+    when       = destroy
+    command    = "kubectl config delete-context gke_${var.project_id}_${self.location}_${google_container_cluster.primary.name}"
+    on_failure = continue
   }
 }

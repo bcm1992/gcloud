@@ -8,12 +8,10 @@ echo deb http://apt.kubernetes.io/ kubernetes-xenial main >> /etc/apt/sources.li
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
-apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
-
-
+#apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
+apt-get install -y kubeadm=1.16.1-00 kubelet=1.16.1-00 kubectl=1.16.1-00
 
 sudo sh -c "echo 10.138.0.10 k8smaster >> /etc/hosts"
-
 
 ### Master Node
 echo "Private IP Check..."
@@ -24,7 +22,7 @@ if [ "$?" -eq 0 ];then
   #kubeadm init --pod-network-cidr=192.168.0.0/16 | tee kubeadm-init.out
   mkdir -p .kube
   cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
-  chown ubuntu:ubuntu /home/ubuntu/.kube/config
+  chown -R ubuntu:ubuntu /home/ubuntu/.kube/
   wget https://tinyurl.com/y8lvqc9g -O calico.yaml
   wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
   kubectl apply -f /home/ubuntu/rbac-kdd.yaml
@@ -32,6 +30,7 @@ if [ "$?" -eq 0 ];then
   #kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/calico.yaml
   kubectl taint nodes --all node-role.kubernetes.io/master-
   echo "alias k=kubectl" >> $HOME/.bash_profile
+  echo "source <(kubectl completion bash)" >> $HOME/.bash_profile
   # NFS
   apt-get install -y nfs-kernel-server
   mkdir /opt/sfw
