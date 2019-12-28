@@ -22,8 +22,10 @@ if [ "$?" -eq 0 ];then
   mkdir -p .kube
   cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
   chown -R ubuntu:ubuntu /home/ubuntu/.kube/
-  wget https://tinyurl.com/y8lvqc9g -O calico.yaml
+  wget https://tinyurl.com/y2vqsobb  -O calico.yaml
+#  wget https://tinyurl.com/y8lvqc9g -O calico.yaml
   wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
+#  wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
   kubectl apply -f /home/ubuntu/rbac-kdd.yaml
   kubectl apply -f /home/ubuntu/calico.yaml 
   #kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/calico.yaml
