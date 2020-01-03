@@ -19,14 +19,14 @@ if [ "$?" -eq 0 ];then
   cd /home/ubuntu
   kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
   #kubeadm init --pod-network-cidr=192.168.0.0/16 | tee kubeadm-init.out
-  mkdir -p .kube
-  cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+  mkdir -p .kube/.kube/config
   chown -R ubuntu:ubuntu /home/ubuntu/.kube/
   wget https://tinyurl.com/y2vqsobb  -O calico.yaml
-#  wget https://tinyurl.com/y8lvqc9g -O calico.yaml
   wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
+#  wget https://tinyurl.com/y8lvqc9g -O calico.yaml
 #  wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
-  kubectl apply -f /home/ubuntu/rbac-kdd.yaml
+  kubectl apply -f /home/ubuntu/r
+  cp -i /etc/kubernetes/admin.conf /home/ubuntubac-kdd.yaml
   kubectl apply -f /home/ubuntu/calico.yaml 
   #kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/calico.yaml
   kubectl taint nodes --all node-role.kubernetes.io/master-

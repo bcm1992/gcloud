@@ -8,7 +8,7 @@ spec:
   accessModes:
   - ReadWriteOnce 
   capacity:
-    storage: 200Mi
+    storage: 200Mi  
   hostPath:
     path: /tmp/nginx
   persistentVolumeReclaimPolicy: Retain
