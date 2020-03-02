@@ -51,7 +51,19 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
+  provisioner "file" {
+    source      = "files/ubuntu.rsa"
+    destination = "/home/ubuntu/ubuntu.rsa"
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file(var.gce_ssh_private_key_file)
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
+
   provisioner "local-exec" {
+    
     command = "tar zcf ./files/yaml_files.tar.gz ./files/ckad ./files/cka"
   }
 
