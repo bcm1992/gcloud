@@ -1,4 +1,5 @@
 apt-get update && sudo apt-get upgrade -y
+apt-get install jq -y
 wget https://training.linuxfoundation.org/cm/LFS258/LFS258_V2019-08-12_SOLUTIONS.tar.bz2 --user=LFtraining --password=Penguin2014
 wget https://training.linuxfoundation.org/cm/LFD259/LFD259_V2020-02-03_SOLUTIONS.tar.bz2 --user=LFtraining --password=Penguin2014
 
