@@ -11,6 +11,7 @@ items:
       io.kompose.service: nginx
     name: nginx
   spec:
+    clusterIP: 10.111.98.130
     ports:
     - name: "443"
       port: 443

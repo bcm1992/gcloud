@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 2
+  labels:
+    app: try1
+  name: try1
+  namespace: default
+  resourceVersion: "5514"
+  selfLink: /apis/apps/v1/namespaces/default/deployments/try1
+  uid: c180069e-11fa-46d3-ace8-6705e81b8f5f
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 6
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: try1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: try1
+    spec:
+      containers:
+      - image: k8s.gcr.io/goproxy:0.1
+        imagePullPolicy: Always
+        name: goproxy
+        readinessProbe:
+          periodSeconds: 10
+          tcpSocket:
+            port: 8080
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      - image: 10.111.98.130:5000/simpleapp:latest
+        imagePullPolicy: Always
+        name: simpleapp
+        volumeMounts:
+        - mountPath: /etc/cars
+          name: car-vol
+        env:
+        - name: ilike
+          valueFrom:
+            configMapKeyRef:
+              name: colors
+              key: favorite
+        envFrom:
+        - configMapRef:
+            name: colors
+        resources: {}
+        volumes:
+        - name: car-vol
+          configMap:
+            defaultMode: 420
+            name: fast-car
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
