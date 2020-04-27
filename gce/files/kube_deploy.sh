@@ -68,4 +68,14 @@ if [ "$?" -eq 0 ];then
 
   # Change owner ship of .kube again because sub directories might has been created.
   chown -R ubuntu:ubuntu /home/ubuntu/.kube/
+
+  # CKAD Lab 3
+  apt-get install -y docker-compose apache2-utils
+  mkdir -p /localdocker/data
+  chown -R ubuntu:ubuntu /localdocker/
+  cd /localdocker/
+  cp ~/files/ckad/lab3/docker-compose.yaml .
+  docker-compose up -d
+  mkdir /tmp/data /tmp/nginx
+
 fi
