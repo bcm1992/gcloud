@@ -7,6 +7,7 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+  min_master_version      = "1.16"
 
   master_auth {
     username = ""
@@ -15,6 +16,17 @@ resource "google_container_cluster" "primary" {
     client_certificate_config {
       issue_client_certificate = false
     }
+  }
+  provisioner "local-exec" {
+    command = "gcloud container clusters get-credentials --region ${google_container_cluster.primary.location} ${google_container_cluster.primary.name}"
+  }
+  provisioner "local-exec" {
+    command = "kubectl config rename-context gke_${var.project_id}_${self.location}_${self.name} {self.name}"
+  }
+  provisioner "local-exec" {
+    when       = destroy
+    command    = "kubectl config delete-context {self.name}"
+    on_failure = continue
   }
 }
 
@@ -27,23 +39,12 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   node_config {
     preemptible  = true
     machine_type = "n1-standard-1"
-
     metadata = {
       disable-legacy-endpoints = "true"
     }
-
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-  }
-  provisioner "local-exec" {
-    command = "gcloud container clusters get-credentials --region ${google_container_cluster.primary.location} ${google_container_cluster.primary.name}"
-  }
-
-  provisioner "local-exec" {
-    when       = destroy
-    command    = "kubectl config delete-context gke_${var.project_id}_${self.location}_${google_container_cluster.primary.name}"
-    on_failure = continue
   }
 }

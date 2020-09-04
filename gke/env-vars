@@ -1,6 +1,6 @@
-export TF_VAR_project_id=linuxfoundation-260706
+export TF_VAR_project_id=bcm1992-214323
 export TF_VAR_gce_ssh_pub_key_file=~/keys/bcm1992.2015.rsa.pub
 export TF_VAR_gce_ssh_private_key_file=~/keys/bcm1992.2015.rsa
 export TF_VAR_gce_ssh_user=bcm1992
 export TF_VAR_kube_admin_private_ip="10.138.0.10"
-export GOOGLE_CLOUD_KEYFILE_JSON=~/.gcloud/linuxfoundation-260706-a39f7a9211d5.json
+export GOOGLE_CLOUD_KEYFILE_JSON=~/.gcloud/bcm1992-214323-e977f9293d9f.json

@@ -2,16 +2,44 @@
 apt-get update && apt-get upgrade -y
 apt-get install jq -y
 apt-get install vim -y
-apt-get install -y docker.io
 
+modprobe overlay
+modprobe br_netfilter
+
+printf "%s\n" "net.bridge.bridge-nf-call-iptables = 1" "net.ipv4.ip_forward = 1" "net.bridge.bridge-nf-call-ip6tables = 1">/etc/sysctl.d/99-kubernetes-cri.conf
+sysctl --system
+
+apt-get install -y software-properties-common 
+add-apt-repository ppa:projectatomic/ppa -y
+apt-get update
+
+# Instaill cri-o
+apt-get install -y cri-o-1.15
+#apt-get install -y docker.io
+cp -pi /etc/crio/crio.conf /etc/crio/crio.conf.ORIG
+
+sed -i 's:^conmon = .*:conmon = "/usr/bin/conmon":' /etc/crio/crio.conf
+sed -i 's:^image_volumes = .*:&\n\nregistries = [\n  "docker.io",\n  "quay.io",\n  "registry.fedoraproject.orig",\n]:' /etc/crio/crio.conf
+
+systemctl daemon-reload
+systemctl enable crio
+systemctl start crio
+
+cat <<EOS > /etc/default/kubelet
+KUBELET_EXTRA_ARGS=--feature-gates="AllAlpha=false,RunAsGroup=true" --container-runtime=remote --cgroup-driver=systemd --container-runtime-endpoint='unix:///var/run/crio/crio.sock' --runtime-request-timeout=5m
+EOS
+
+# Install Kubernetes
 echo deb http://apt.kubernetes.io/ kubernetes-xenial main >> /etc/apt/sources.list.d/kubernetes.list
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update
-#apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
 #apt-get install -y --allow-downgrades kubeadm=1.16.1-00 kubelet=1.16.1-00 kubectl=1.16.1-00
 apt-get install -y kubeadm=1.18.1-00 kubelet=1.18.1-00 kubectl=1.18.1-00
+# Set hold to prevent the packages from being updated
+apt-mark hold kubelet kubeadm kubectl
 
-sudo sh -c "echo 10.138.0.10 k8smaster >> /etc/hosts"
+### Add host alias
+sh -c "echo 10.138.0.10 k8smaster >> /etc/hosts"
 
 ### Enabling password-less SSH using ubuntu user, ubuntu.rsa is copied by previous provisioner.
 chmod 600 /home/ubuntu/ubuntu.rsa
@@ -35,21 +63,24 @@ controlPlaneEndpoint: "k8smaster:6443"
 networking:
   podSubnet: 192.168.0.0/16
 EOS
+
+  # --pod-network-cidr=192.168.0.0/16
   kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
-  
   mkdir -p /home/ubuntu/.kube
   cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
   chown -R ubuntu:ubuntu /home/ubuntu/.kube/
-  # update URL for the newer version (1.16 compatibility)
-  #wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
-  #wget https://tinyurl.com/y2vqsobb  -O calico.yaml
-  #kubectl apply -f rbac-kdd.yaml
+
+  # Install Calico
   wget https://docs.projectcalico.org/manifests/calico.yaml
-  kubectl apply -f calico.yaml
-  # Enable masster node to work as a woker node
-  #kubectl taint nodes --all node-role.kubernetes.io/master-
+  #sed -i 's/# - name: CALICO_IPV4POOL_CIDR/- name: CALICO_IPV4POOL_CIDR/' calico.yaml
+  #sed -i 's!#   value: "192.168.0.0/16"!  value: "192.168.0.0/16"!' calico.yaml
+
+  apt-get install bash-completion -y
+  echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+  kubectl taint nodes --all node-role.kubernetes.io/master-
   echo "alias k=kubectl" >> $HOME/.bash_profile
-  echo "source <(kubectl completion bash)" >> $HOME/.bash_profile
+
   # Enable NFS server on the master node
   apt-get install -y nfs-kernel-server
   mkdir /opt/sfw
@@ -68,13 +99,8 @@ EOS
     echo "run kubeadm on linux-foundation-${h}"
     ssh -i /home/ubuntu/ubuntu.rsa -l ubuntu -oStrictHostKeyChecking=no linux-foundation-${h} sudo ${k} ${i}
   fi
-  done
+ done
 
   # Change owner ship of .kube again because sub directories might has been created.
   chown -R ubuntu:ubuntu /home/ubuntu/.kube/
-
-  wget https://training.linuxfoundation.org/cm/LFS258/LFS258_V2020-04-20_SOLUTIONS.tar.bz2 --user=LFtraining --password=Penguin2014
-  wget https://training.linuxfoundation.org/cm/LFD259/LFD259_V2020-02-03_SOLUTIONS.tar.bz2 --user=LFtraining --password=Penguin2014
-  tar -xf LFS258_V2020-04-20_SOLUTIONS.tar.bz2
-  tar -xf LFD259_V2020-02-03_SOLUTIONS.tar.bz2
 fi
