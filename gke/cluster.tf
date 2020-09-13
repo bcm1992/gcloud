@@ -21,11 +21,11 @@ resource "google_container_cluster" "primary" {
     command = "gcloud container clusters get-credentials --region ${google_container_cluster.primary.location} ${google_container_cluster.primary.name}"
   }
   provisioner "local-exec" {
-    command = "kubectl config rename-context gke_${var.project_id}_${self.location}_${self.name} {self.name}"
+    command = "kubectl config rename-context gke_${var.project_id}_${self.location}_${self.name} ${self.name}"
   }
   provisioner "local-exec" {
     when       = destroy
-    command    = "kubectl config delete-context {self.name}"
+    command    = "kubectl config delete-context ${self.name}"
     on_failure = continue
   }
 }
